@@ -94,7 +94,13 @@
   NSPredicate *formattedPredicate = [NSPredicate fb_formatSearchPredicate:predicate];
   NSMutableArray<XCUIElement *> *result = [NSMutableArray array];
   // Include self element into predicate search
-  if ([formattedPredicate evaluateWithObject:self.fb_lastSnapshot]) {
+  BOOL doesPredicateMatchSelf;
+  if (SYSTEM_VERSION_LESS_THAN(@"11.0")) {
+    doesPredicateMatchSelf = [formattedPredicate evaluateWithObject:self.fb_lastSnapshot];
+  } else {
+    doesPredicateMatchSelf = [formattedPredicate evaluateWithObject:self];
+  }
+  if (doesPredicateMatchSelf) {
     if (shouldReturnAfterFirstMatch) {
       return @[self];
     }
